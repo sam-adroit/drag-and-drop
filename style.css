@@ -15,6 +15,11 @@ h1 {
   text-align: center;
 }
 
+#score {
+  padding-top: 10px;
+  font-size: 1.2rem;
+}
+
 .draggable-list {
   padding: 0;
   list-style: none;
@@ -25,6 +30,8 @@ h1 {
 .draggable {
   flex-grow: 1;
   padding: 0.68em 1em;
+  display: flex;
+  justify-content: space-between;
 }
 
 .draggable-list li {

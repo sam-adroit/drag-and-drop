@@ -19,9 +19,6 @@ let listItems = [];
 setItem();
 
 function setItem() {
-  if (listItems.length > 0) {
-    console.log("Calling...");
-  }
   [...people]
     .map((val) => ({ val, sort: Math.random() }))
     .sort((a, b) => b.sort - a.sort)
@@ -33,32 +30,84 @@ function setItem() {
       // <i class="fas fa-grip-lines"></i>;
 
       li.innerHTML = `
-    <span class="number">${index + 1}</span>
-    <div class="draggable" draggable="true" id="${index + 1}">
-    <p id=p${index + 1}>${person}</p>
-    </div>
-    `;
+                    <span class="number">${index + 1}</span>
+                    <div class="draggable" draggable="true" id="${index + 1}">
+                      <p id="p${person}">${person}</p>
+                      <i id="i${person}" class="fas fa-grip-lines"></i>
+                    </div>
+                  `;
       listItems.push(li);
       draggableLists.appendChild(li);
     });
-  console.log(
-    "beginning",
-    listItems.map((listItem) => listItem.lastElementChild.innerText)
+  addEventListeners();
+}
+
+// console.log(document.getElementsByClassName("draggable"));
+
+let dragData;
+let dragContent;
+
+function drag(e) {
+  e.dataTransfer.setData("text", e.target.id);
+  dragData = e.dataTransfer.getData("text");
+
+  dragContent = document.getElementById(dragData).innerHTML;
+}
+
+// console.log(document.getElementById(1).parentNode);
+
+function over(e) {
+  e.preventDefault();
+}
+
+function drop(e) {
+  e.preventDefault();
+  if (e.target.className == "draggable") {
+    var dropPosition = document.getElementById(e.target.id);
+    var dropPositionContent = dropPosition.innerHTML;
+  } else {
+    var dropPosition = document.getElementById(e.target.id).parentNode;
+    var dropPositionContent = dropPosition.innerHTML;
+  }
+  document.getElementById(dragData).innerHTML = dropPositionContent;
+  dropPosition.innerHTML = dragContent;
+}
+
+function addEventListeners() {
+  listItems.forEach((draggedItem) =>
+    draggedItem.addEventListener("dragstart", drag)
+  );
+
+  listItems.forEach((draggedItem) =>
+    draggedItem.addEventListener("dragover", over)
+  );
+
+  listItems.forEach((draggedItem) =>
+    draggedItem.addEventListener("drop", drop)
   );
 }
 
 function checkResult() {
+  let scoreElement = document.getElementById("score");
+  let score = 0;
   let currentList = listItems.map(
     (listItem) => listItem.lastElementChild.innerText
   );
   for (let i = 0; i < people.length; i++) {
     if (currentList[i] == people[i]) {
       document.getElementById(i + 1).style.color = "green";
+      score++;
     } else {
       document.getElementById(i + 1).style.color = "red";
     }
   }
+  scoreElement.innerText = `Score: ${score}/10`;
+  score > 4
+    ? (scoreElement.style.color = "green")
+    : (scoreElement.style.color = "red");
 }
+
+check.addEventListener("click", checkResult);
 
 // Mukesh Ambani
 // Gautam Adani & Family
@@ -70,33 +119,3 @@ function checkResult() {
 // Jim Walton
 // Alice Walton
 // Rob Walton
-
-let dragData;
-let dragContent;
-document.addEventListener("dragstart", (e) => {
-  e.dataTransfer.setData("text", e.target.id);
-  dragData = "p" + e.dataTransfer.getData("text");
-  // dragContent = document.getElementById(dragData).innerHTML;
-  dragContent = document.getElementById(dragData).innerHTML;
-  // console.log(dragContent, dragData);
-  console.log(
-    "drag",
-    listItems.map((listItem) => listItem.lastElementChild.innerText)
-  );
-});
-document.addEventListener("dragover", (e) => {
-  e.preventDefault();
-});
-document.addEventListener("drop", (e) => {
-  e.preventDefault();
-  // console.log("drop", e.target.id);
-
-  // console.log(document.getElementById(e.target.id).innerHTML);
-  let dropPositionContent = document.getElementById(e.target.id).innerHTML;
-
-  document.getElementById(dragData).innerHTML = dropPositionContent;
-  document.getElementById(e.target.id).innerHTML = dragContent;
-  // console.log(listItems.map((listItem) => listItem.innerText));
-});
-
-check.addEventListener("click", checkResult);
